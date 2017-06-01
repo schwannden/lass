@@ -22,6 +22,10 @@ package object Database {
 
   case class Record(dateTime: DateTime, lon: Double, lat: Double, pm: Double)
 
+  val conf = new SparkConf().setMaster("spark://10.0.0.2:7077").setAppName(s"lass").setJars(dept)
+    .set("spark.executor.memory", "16g")
+  val sc = SparkContext.getOrCreate(conf)
+
   type Feeds = RDD[Record]
 
   class Datasets(val root: String = "data") {
@@ -76,8 +80,6 @@ package object Database {
 
   case class Dataset(root: String, version: String) {
     override def toString: String = version
-    val conf = new SparkConf().setMaster("spark://10.0.0.2:7077").setAppName(s"lass").setJars(dept)
-    val sc = SparkContext.getOrCreate(conf)
 
 
     val timeStamp: DateTime = {
@@ -108,7 +110,8 @@ package object Database {
     import context.dispatcher
 
     private val dataUrl = "https://data.lass-net.org/data/last-all-airbox.json"
-    private val datasets: Datasets = new Datasets("data")
+    private val root = "/home/schwannden/Dropbox/schwannden/Documents/computerScience/play/play-scala-seed/data"
+    private val datasets: Datasets = new Datasets(root)
 
 
     override def preStart(): Unit = println("db started")
